@@ -1,0 +1,86 @@
+/* Reset styles */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: lightgray;
+  font-family: Arial, sans-serif;
+  text-align: center;
+}
+
+h1 {
+  font-size: 3rem;
+  color: #333;
+  -webkit-text-stroke-width: 1px;
+  -webkit-text-stroke-color: #fff;
+  animation-duration: 1.5s; /* Removed the animation property here */
+}
+
+/* Keyframes for glow when temperature is above 15°C */
+@keyframes glow-above-15 {
+  from {
+    text-shadow: 0 0 10px #fff;
+  }
+  to {
+    text-shadow: 0 0 20px #ffcc00, 0 0 30px #ffcc00, 0 0 40px #ffcc01;
+  }
+}
+
+/* Keyframes for glow when temperature is below or equal to 15°C */
+@keyframes glow-below-15 {
+  from {
+    text-shadow: 0 0 10px #fff;
+  }
+  to {
+    text-shadow: 0 0 10px #82eefd, 0 0 20px #82eefd, 0 0 30px #82eefd;
+  }
+}
+
+/* Added classes for applying keyframes animations */
+.above-15 {
+  animation-name: glow-above-15;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+  animation-timing-function: ease-in-out;
+}
+
+.below-15 {
+  animation-name: glow-below-15;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+  animation-timing-function: ease-in-out;
+}
+
+p {
+  border: 1px solid #007bff; /* Blue border */
+  padding: 10px;
+  margin: auto;
+  width: 50%;
+  max-width: 80%;
+  border-radius: 5px;
+  background-color: #fff; /* White background */
+  color: #007bff; /* Blue text color */
+}
+
+button {
+  min-width: 100px;
+  max-width: 100px;
+  background-color: #007bff; /* Blue background */
+  border: 1px solid #007bff; /* Blue border */
+  color: #fff; /* White text color */
+  padding: 10px;
+  border-radius: 5px;
+  margin: 5px;
+}
+
+button:active {
+  background-color: purple;
+  border-color: #004286; /* Even darker blue border when clicked */
+}
+
+.Regional {
+  background-color: green;
+}
