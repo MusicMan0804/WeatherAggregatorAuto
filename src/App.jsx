@@ -18,10 +18,19 @@ const WeatherApp = () => {
   const apiKey2 = "5e2c7e0967a947d0a35201701240103"; //for weather api
 
   const rowOc = ["Sidney", "Melbourne", "Port Moresby", "Suva", "Auckland"];
+  const rowOc2 = ["Perth", "Honiara", "Hawaii", "Brisbane", "Adelaide"];
+
   const rowAs = ["Beijing", "Mumbai", "Karachi", "Tokyo", "Bangkok"];
+  const rowAs2 = ["Singapore", "Ankara", "Yangon", "Ulaanbataar", "Tbilisi"];
+
   const rowSa = ["Brasilia", "Lima", "Caracas", "Recife", "Buenos Aires"];
+  const rowSa2 = ["Salvador", "Fortaleza", "Curitiba", "El Alto", "Soledad"];
+
   const rowEu = ["Athens", "Dublin", "Berlin", "London", "Paris"];
+  const rowEu2 = ["Barcelona", "Sofia", "Prague", "Odesa", "Warsaw"];
+
   const rowNa = ["Chicago", "New York", "Mexico City", "Ottawa", "Montreal"];
+  const rowNa2 = ["Los Angeles", "Houston", "Havana", "Toronto", "Tijuana"];
 
   //longitude and latitude constants
   let coordMap = {
@@ -55,6 +64,30 @@ const WeatherApp = () => {
     Brasilia: [-15.7782, -47.9294],
     Suva: [-18.1333, 178.4417],
     Melbourne: [-37.8136, 144.9631],
+    Perth: [-31.953512, 115.857048],
+    Honiara: [-9.43333, 159.95],
+    Hawaii: [19.741755, -155.844437],
+    Brisbane: [-27.470125, 153.021072],
+    Singapore: [1.29027, 103.851959],
+    Ankara: [39.925533, 32.866287],
+    Yangon: [16.80528, 96.15611],
+    Tbilisi: [41.715138, 44.827096],
+    Salvador: [-12.97111, -38.51083],
+    Fortaleza: [-3.71722, -38.54306],
+    Curitiba: [-25.42778, -49.27306],
+    "El Alto": [-16.50472, -68.16333],
+    Soledad: [36.42469, -121.32632],
+    Barcelona: [41.3888, 2.159],
+    Sofia: [42.6975, 23.32422],
+    Prague: [50.05, 14.253],
+    Odesa: [46.4775, 30.73264],
+    Warsaw: [52.22977, 21.011785],
+    "Los Angeles": [34.052235, -118.2436836],
+    Houston: [29.75, -95.377],
+    Havana: [23.113592, -82.3665928],
+    Toronto: [43.65107, -79.3470159],
+    Tijuana: [32.5027, -117.003711],
+    Adelaide: [-34.92866, 138.59863],
     "Null Island": [0, 0],
   };
   function getCoords(city) {
@@ -200,15 +233,30 @@ const WeatherApp = () => {
       <RegionButton onClick={setRowDisplay} region="Europe" value="Eu" />
       <RegionButton onClick={setRowDisplay} region="Oceania" value="Oc" />
       {rowDisplay === "As" ? (
-        <Row names={rowAs} onClick={getCoords} />
+        <div>
+          <Row names={rowAs} onClick={getCoords} />
+          <Row names={rowAs2} onClick={getCoords} />
+        </div>
       ) : rowDisplay === "Na" ? (
-        <Row names={rowNa} onClick={getCoords} />
+        <div>
+          <Row names={rowNa} onClick={getCoords} />
+          <Row names={rowNa2} onClick={getCoords} />
+        </div>
       ) : rowDisplay === "Sa" ? (
-        <Row names={rowSa} onClick={getCoords} />
+        <div>
+          <Row names={rowSa} onClick={getCoords} />
+          <Row names={rowSa2} onClick={getCoords} />
+        </div>
       ) : rowDisplay === "Eu" ? (
-        <Row names={rowEu} onClick={getCoords} />
+        <div>
+          <Row names={rowEu} onClick={getCoords} />
+          <Row names={rowEu2} onClick={getCoords} />
+        </div>
       ) : rowDisplay === "Oc" ? (
-        <Row names={rowOc} onClick={getCoords} />
+        <div>
+          <Row names={rowOc} onClick={getCoords} />
+          <Row names={rowOc2} onClick={getCoords} />
+        </div>
       ) : null}
       <div>
         <InputBar label="Name: " value={city} />
@@ -218,9 +266,31 @@ const WeatherApp = () => {
       <br />
       <br />
       <button onClick={fetchAverages}>Get Averages</button>
-      <Output text="Average Temperature" value={averageTemperature} unit="°C" />
-      <Output text="Average Wind Speed" value={averageWindSpeeds} unit="kph" />
-      <Output text="Average Humidity" value={averageHumidity} unit="%" />
+      <Output
+        text="Average Temperature"
+        value={averageTemperature}
+        unit="°C"
+        value2={(averageTemperature * (9 / 5) + 32).toFixed(2)}
+        unit2="°F"
+        value3={(averageTemperature * 1 + 273).toFixed(2)}
+        unit3="°K"
+      />
+      <Output
+        text="Average Wind Speed"
+        value={averageWindSpeeds}
+        unit="kph"
+        value2={(averageWindSpeeds / 1.609344).toFixed(2)}
+        unit2="mph"
+        value3="N/A"
+      />
+      <Output
+        text="Average Humidity"
+        value={averageHumidity}
+        unit="%"
+        value2="N/A"
+        unit2="N/A"
+        value3="N/A"
+      />
     </div>
   );
 };
