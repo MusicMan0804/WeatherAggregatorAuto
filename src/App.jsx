@@ -115,7 +115,6 @@ const WeatherApp = () => {
     }
   };
 
-  //doesn't currently work, activate the dang key WeatherMap!
   const getOpenWeatherTemperature = async (apiEndpoint) => {
     try {
       const response = await axios.get(apiEndpoint);
@@ -132,6 +131,7 @@ const WeatherApp = () => {
       return null;
     }
   };
+  //collect weather API data
   const getWeatherApiTemperature = async (apiEndpoint) => {
     try {
       const response = await axios.get(apiEndpoint);
@@ -154,13 +154,13 @@ const WeatherApp = () => {
     let humidities = [];
 
     //collect openMeteo data
-
     let openMeteo = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,wind_speed_10m,relative_humidity_2m`;
     let [temp1, wind1, Humidity1] = await getMeteoTemperature(openMeteo);
     temperatures.push(await temp1);
     windSpeeds.push(await wind1);
     humidities.push(await Humidity1);
 
+    //collect open weather data
     if (city !== "Null Island") {
       //collect openWeather data
       let openWeather = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric,uk&APPID=${apiKey}`;
