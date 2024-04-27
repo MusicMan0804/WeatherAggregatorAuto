@@ -14,6 +14,13 @@ const WeatherApp = () => {
   const [longitude, setLongitude] = useState(0);
   const [latitude, setLatitude] = useState(0);
   const [rowDisplay, setRowDisplay] = useState(null);
+
+  //diffs structured like so [meteo, Open Weather, Weather API, future APIs], using only main units for now
+  const [temperatureDiffs, setTempDiffs] = useState([]);
+  const [windDiffs, setWindDiffs] = useState([]);
+  const [humidityDiffs, setHumidityDiffs] = useState([]);
+
+  //keys
   const apiKey = "a68fcc53181bfaec09e740708d952020"; // for open weather map
   const apiKey2 = "5e2c7e0967a947d0a35201701240103"; //for weather api
 
@@ -21,7 +28,7 @@ const WeatherApp = () => {
   const rowOc2 = ["Perth", "Honiara", "Hawaii", "Brisbane", "Adelaide"];
 
   const rowAs = ["Beijing", "Mumbai", "Karachi", "Tokyo", "Bangkok"];
-  const rowAs2 = ["Singapore", "Ankara", "Yangon", "Ulaanbataar", "Tbilisi"];
+  const rowAs2 = ["Singapore", "Ankara", "Yangon", "Ulaanbaatar", "Tbilisi"];
 
   const rowSa = ["Brasilia", "Lima", "Caracas", "Recife", "Buenos Aires"];
   const rowSa2 = ["Salvador", "Fortaleza", "Curitiba", "El Alto", "Soledad"];
@@ -89,7 +96,10 @@ const WeatherApp = () => {
     Tijuana: [32.5027, -117.003711],
     Adelaide: [-34.92866, 138.59863],
     "Null Island": [0, 0],
+    Ulaanbaatar: [47.92123, 106.918556],
   };
+
+  //Pass in city, get coords from map
   function getCoords(city) {
     const [latitude, longitude] = coordMap[city];
     setLatitude(latitude);
@@ -131,7 +141,6 @@ const WeatherApp = () => {
       return null;
     }
   };
-  //collect weather API data
   const getWeatherApiTemperature = async (apiEndpoint) => {
     try {
       const response = await axios.get(apiEndpoint);
@@ -152,41 +161,50 @@ const WeatherApp = () => {
     let temperatures = [];
     let windSpeeds = [];
     let humidities = [];
+    let tempDiffs = [];
+    let wDiffs = [];
+    let humidDiffs = [];
 
     //collect openMeteo data
     let openMeteo = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,wind_speed_10m,relative_humidity_2m`;
     let [temp1, wind1, Humidity1] = await getMeteoTemperature(openMeteo);
+    //add data to appropriate arrays
     temperatures.push(await temp1);
     windSpeeds.push(await wind1);
     humidities.push(await Humidity1);
 
-    //collect open weather data
     if (city !== "Null Island") {
+      //Null island not actual city name so apis that use names are excluded
       //collect openWeather data
       let openWeather = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric,uk&APPID=${apiKey}`;
       let [temp2, wind2, humidity2] = await getOpenWeatherTemperature(
         openWeather
       );
+      //add data to appropriate arrays
       temperatures.push(await temp2);
       windSpeeds.push(await wind2);
       humidities.push(await humidity2);
+
       //collect weatherApi data
       let weatherApi = `https://api.weatherapi.com/v1/current.json?key=${apiKey2}&q=${city}`;
       let [temp3, wind3, humidity3] = await getWeatherApiTemperature(
         weatherApi
       );
+      //add data to appropriate arrays
       temperatures.push(await temp3);
       windSpeeds.push(await wind3);
       humidities.push(await humidity3);
     }
 
     try {
+      //remove any failed calls from lists
       const filteredWindSpeeds = windSpeeds.filter((wind) => wind !== null);
-      const filteredTemperatures = temperatures.filter((temp) => temp !== null); //filter removes null values
+      const filteredTemperatures = temperatures.filter((temp) => temp !== null);
       const filteredHumidities = humidities.filter(
         (humidity) => humidity !== null
       );
 
+      //Get sums of all compiled data
       let total = 0;
       for (let i = 0; i < filteredTemperatures.length; i++) {
         total += filteredTemperatures[i];
@@ -202,12 +220,30 @@ const WeatherApp = () => {
         humidityTotal += filteredHumidities[i];
       }
 
+      //calc averages
       let averageWindSpeed = windTotal / filteredWindSpeeds.length;
       let averageTemp = total / filteredTemperatures.length;
       let averageHumidity = humidityTotal / filteredHumidities.length;
+
+      //get differences
+      tempDiffs = filteredTemperatures.map((item) =>
+        (averageTemp - item).toFixed(2)
+      );
+      //applies to function to every item in lsit, pass in an item and return that item subtracted from averagetemp and rounded
+      wDiffs = filteredWindSpeeds.map((item) =>
+        (averageWindSpeed - item).toFixed(2)
+      );
+      humidDiffs = filteredHumidities.map((item) =>
+        (averageHumidity - item).toFixed(2)
+      );
+
       setAverageHumidity(averageHumidity.toFixed(2));
       setAverageWindSpeeds(averageWindSpeed.toFixed(2));
-      setAverageTemperature(averageTemp.toFixed(2)); //tofixed rounds to 2 decimal places
+      setAverageTemperature(averageTemp.toFixed(2));
+
+      setTempDiffs(tempDiffs);
+      setWindDiffs(wDiffs);
+      setHumidityDiffs(humidDiffs);
 
       //changing the highlight for title based off temperature
       const h1Element = document.querySelector("h1");
@@ -223,6 +259,8 @@ const WeatherApp = () => {
     }
   };
 
+  //Would like to refactor outputs in some way, passing in a lot of props
+  //maybe pass an array of units and make calculations based on that in the component itself?
   return (
     <div>
       <h1>Weather Aggregator</h1>
@@ -274,6 +312,7 @@ const WeatherApp = () => {
         unit2="°F"
         value3={(averageTemperature * 1 + 273).toFixed(2)}
         unit3="°K"
+        diffs={temperatureDiffs}
       />
       <Output
         text="Average Wind Speed"
@@ -282,6 +321,7 @@ const WeatherApp = () => {
         value2={(averageWindSpeeds / 1.609344).toFixed(2)}
         unit2="mph"
         value3="N/A"
+        diffs={windDiffs}
       />
       <Output
         text="Average Humidity"
@@ -290,6 +330,7 @@ const WeatherApp = () => {
         value2="N/A"
         unit2="N/A"
         value3="N/A"
+        diffs={humidityDiffs}
       />
     </div>
   );
